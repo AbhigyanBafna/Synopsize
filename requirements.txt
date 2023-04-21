@@ -1,0 +1,10 @@
+customtkinter
+tk
+pillow
+pydub
+SpeechRecognition
+PyAudio
+lxml
+python-docx
+openai
+requests
