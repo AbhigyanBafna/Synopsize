@@ -7,6 +7,7 @@ from config.definitions import LOGOIMG
 import sumAudio #Page Import
 import sumText #Page Import
 import creditsPage #PageImport
+import ytPage #PageImport
 
 customtkinter.set_appearance_mode("System")  # Modes: system (default), light, dark
 customtkinter.set_default_color_theme("blue")  # Themes: blue (default), dark-blue, green
@@ -28,11 +29,18 @@ def showTextPage():
     custom_toplevel.geometry("900x600")
     custom_toplevel.mainloop()
 
+def showYTPage():
+    """"Displays a Top Level page of YT Link Page"""
+    custom_toplevel = ytPage.CustomToplevel(dayOfMonthBox.get(), dayOfWeekBox.get(), timeBox.get(), monthBox.get(), str(titleBox.get()))
+    custom_toplevel.geometry("900x600")
+    custom_toplevel.mainloop()
+
 def showCreditsPage():
     """"Displays a Top Level page of CreditsPage"""
     custom_toplevel = creditsPage.CustomToplevel()
     custom_toplevel.geometry("400x400")
     custom_toplevel.mainloop()
+    
 
 def combobox_callback(choice):
     """"Displays selected option in GUI"""
@@ -183,20 +191,32 @@ titleBox.place(relx=0.5, rely=0.525, anchor=tk.CENTER)
 # Summarise using Audio
 sumAudioBtn = customtkinter.CTkButton(
     master=app, 
-    text="Summarise using Audio",
+    text="Using Audio",
     command=showAudioPage,
     font=("Montserrat SemiBold", 30),
     width=190,
     height=65,
     corner_radius=50
 )
-sumAudioBtn.place(relx=0.5, rely=0.70, anchor=tk.CENTER)
+sumAudioBtn.place(relx=0.375, rely=0.70, anchor=tk.CENTER)
 
 # Summarise using Text
 sumTextBtn = customtkinter.CTkButton(
     master=app, 
-    text="Summarise using Text", 
+    text="Using Text", 
     command=showTextPage,
+    font=("Montserrat SemiBold", 30),
+    width=190,
+    height=65,
+    corner_radius=50
+)
+sumTextBtn.place(relx=0.625, rely=0.7, anchor=tk.CENTER)
+
+# Summarise using YouTube Link
+sumTextBtn = customtkinter.CTkButton(
+    master=app, 
+    text="Using Youtube URL", 
+    command=showYTPage,
     font=("Montserrat SemiBold", 30),
     width=190,
     height=65,
