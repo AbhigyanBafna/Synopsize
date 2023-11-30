@@ -1,4 +1,10 @@
+# Converts Audio to speech by using Google's SpeechRecognition to convert the Audio to text.
+# If the Audio is too long, it breaks them down into chunks of 3 miniutes due to limitations of Speech Recognition.
+# The converted text is send to text-davinci-003 for summarization and the output is returned in the text area.
+
 import tkinter as tk
+import math
+import os
 from tkinter import Toplevel
 from tkinter import filedialog #File System Access
 import customtkinter #GUI Library
@@ -17,8 +23,8 @@ import wave
 import io
 
 #Page Imports
-import formatter
-import openai
+import src.backend.formatter as formatter
+import src.backend.openai as openai
 
 
 class CustomToplevel(CTkToplevel):
@@ -165,40 +171,70 @@ class CustomToplevel(CTkToplevel):
             self.browseBtn.configure(text=self.displayname)
 
     def loadingSet(self):
+        self.summarybox.delete("0.0","end")
         self.summarybox.insert("0.0", "Loading...")
         self.after(1, self.convertToText)
 
     def convertToText(self):
         """"Converts Audio to .wav format, converts it into text using Google's SpeechRecogniser. 
         Then uses OpenAI's text model to generate its summary."""
+
+        if not hasattr(self, 'filename'):
+            self.summarybox.delete("0.0","end")
+            self.summarybox.insert("0.0", "Please provide a file!")
+            return
+
         audio_file = self.filename
         try:
-            
-            # Load the audio file using pydub
-            sound = AudioSegment.from_file(audio_file)
+            parts = audio_file.split('.')
+            extension = parts[-1] if len(parts) > 1 else ""
 
-            # Convert to WAV format
-            raw_data = io.BytesIO(sound.raw_data)
-            wav_data = io.BytesIO()
-            sound.export(wav_data, format="wav")
-            wav_data.seek(0)
+            if extension != ".wav":
             
+                # Load the audio file using pydub
+                sound = AudioSegment.from_file(audio_file)
+
+                # Convert to WAV format
+                audio_file = "./output.wav"
+                sound.export(audio_file, format="wav")
+
+            # Set up a SpeechRecognition recognizer instance
+            r = sr.Recognizer()
+            
+            totalSize = os.path.getsize(audio_file)
+            maxSize = int(1e7) #10MB Limit
+            audio = AudioSegment.from_file(audio_file)
             text = ''
-            myaudio = AudioSegment.from_file(wav_data)
-            chunks_length_ms = 180000
-            chunks = make_chunks(myaudio, chunks_length_ms)
-            for i, chunk in enumerate(chunks):
-                chunkName = "./config/chunked/audioChunk" + f"{i}.wav"
-                print("Exporting", chunkName)
-                chunk.export(chunkName, format="wav")
 
-                # Set up a SpeechRecognition recognizer instance
-                r = sr.Recognizer()
-                with sr.AudioFile(chunkName) as source:
+            if maxSize <= totalSize:
+                # Calculate the number of chunks needed based on the maximum size
+                n = math.ceil(totalSize / maxSize)
+
+                # Calculate the size of each chunk
+                chunkDuration = math.ceil(len(audio) / n)
+
+                chunks = make_chunks(audio, int(chunkDuration))
+
+                try:
+                    for i, chunk in enumerate(chunks):
+                        chunkName = "./config/chunked/audioChunk" + f"{i}.wav"
+                        print("Exporting", chunkName)
+                        chunk.export(chunkName, format="wav")
+
+                        with sr.AudioFile(chunkName) as source:
+                            audio = r.record(source)
+                        rec = r.recognize_google(audio, language="en-IN")
+                        text += " ".join([text, rec])
+                        print(text)
+                
+                except Exception as e:
+                    print(e)
+            
+            else:
+                with sr.AudioFile(audio_file) as source:
                     audio = r.record(source)
                 rec = r.recognize_google(audio, language="en-IN")
                 text = "".join([text, rec])
-
             
             self.summary = openai.summarise(str(text))
 

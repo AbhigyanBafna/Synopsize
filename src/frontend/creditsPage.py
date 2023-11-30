@@ -1,3 +1,5 @@
+# A little about the App and links of the Developers Social Profiles.
+
 import tkinter as tk
 from tkinter import Toplevel
 from tkinter import filedialog #File System Access
@@ -25,12 +27,12 @@ class CustomToplevel(CTkToplevel):
         )
         self.userMessage.place(relx=0.5, rely=0.3, anchor=tk.CENTER)
 
-        self.userMessage.insert("0.0", "Hey User! hope you find Synopsize useful. This project was developed by us during our Engg. Sem IV and learned a lot while building it. If you would like to give feedback or connect with us, click on a link below. Synopsize Out :)")
+        self.userMessage.insert("0.0", "Hey User! hope you find Synopsize useful. It was developed during our Engg. Sem IV and learned a lot while building it. If you would like to give feedback or connect with us, click on a link below.     - Abhi")
 
         #DevLinks
         self.abhi = customtkinter.CTkButton(
             self, 
-            text="Abhigyan", 
+            text="Abhi", 
             command= lambda: self.open_link("abhi"),
             font=("Montserrat SemiBold", 20),
             width=60,

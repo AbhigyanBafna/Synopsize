@@ -1,3 +1,7 @@
+# Extracts subtitles from Youtube Transcript API and sends them to text-davinci-003 for summariztion. Returns the output in the text area.
+
+import re
+import time
 import tkinter as tk
 from tkinter import Toplevel
 from tkinter import filedialog #File System Access
@@ -9,8 +13,8 @@ from youtube_transcript_api import YouTubeTranscriptApi
 from PIL import Image, ImageTk #Image Processing
 
 #Page Imports
-import formatter
-import openai
+import src.backend.formatter as formatter
+import src.backend.openai as openai
 
 
 class CustomToplevel(CTkToplevel):
@@ -36,7 +40,7 @@ class CustomToplevel(CTkToplevel):
         self.logoBtn = customtkinter.CTkButton(
             self, 
             text="", 
-            command=self.browseFile,
+            command=self.destroy,
             fg_color="transparent",
             image=self.mainlogo,
             state="disabled",
@@ -124,27 +128,48 @@ class CustomToplevel(CTkToplevel):
         """"Displays selected option in GUI"""
         print("ComCTkComboBox dropdown clicked:", choice)
 
-    def browseFile(self):
-        """"Acepts Text file from File System Browser"""
-        self.filename = filedialog.askopenfilename(filetypes=(("Text Files", "*.txt"), ("All files", "*.*")))
-        self.displayname = ".../" + self.filename.split("/")[-1][:15] + "..."
-        if self.displayname:
-            self.browseBtn.configure(text=self.displayname)
-
     def loadingSet(self):
+        self.summarybox.delete("0.0","end")
         self.summarybox.insert("0.0", "Loading...")
         self.after(1, self.convertToText)
             
     def convertToText(self):
         """"Reads text file and stores it. Then uses OpenAI's text model to generate its summary."""
+
         url = self.linkBox.get()
+
+        # Check if the URL is a valid YouTube link
+        ytRE = (
+            r'(https?://)?(www\.)?'
+            '(youtube|youtu|youtube-nocookie)\.(com|be)/'
+            '(watch\?v=|embed/|v/|.+\?v=)?([^&=%\?]{11})')
+        ytMatch = re.match(ytRE, url)
+
+        if len(url) <= 0:
+            self.summarybox.delete("0.0","end")
+            self.summarybox.insert("0.0", "Please provide a link!")
+            return
+        elif not ytMatch:
+            self.summarybox.delete("0.0","end")
+            self.summarybox.insert("0.0", "Invalid Link, Please provide a valid Youtube Link!")
+            return
+
+
         videoID = url.split("v=")
         srt = YouTubeTranscriptApi.get_transcript(videoID[1])
+        print(len(srt))
         result = ''
+        c = 0
         for item in srt:
+            c += 1
             result += item['text']
-
-        self.summary = openai.summarise(result)
+            if c == 150:
+                self.summary += openai.summarise(result)
+                time.sleep(4)
+                c = 0
+                result = ''
+        
+        self.summary += openai.summarise(result)
 
         if result:
             self.summarybox.delete("0.0", "end")

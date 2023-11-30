@@ -1,3 +1,5 @@
+# Queries Abhigyan's GPT Webhook to harness the power of AI for a good quality summary.
+
 import requests
 import xml.etree.ElementTree as ET
 
@@ -26,4 +28,7 @@ def summarise(text):
     # Print the response message
     print(response_message)
     responseMessage = response_message.strip()
+
+    if responseMessage == 'There was an issue with the server':
+        return ''
     return responseMessage

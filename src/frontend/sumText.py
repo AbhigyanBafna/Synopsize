@@ -1,3 +1,5 @@
+# Summarizes text by sending it to text-davinci-003 and returning the output in the text area.
+
 import tkinter as tk
 from tkinter import Toplevel
 from tkinter import filedialog #File System Access
@@ -8,9 +10,8 @@ from config.definitions import LOGOIMG
 from PIL import Image, ImageTk #Image Processing
 
 #Page Imports
-import formatter
-import openai
-
+import src.backend.formatter as formatter
+import src.backend.openai as openai
 
 class CustomToplevel(CTkToplevel):
     def __init__(self, dayOfMonth, time, dayOfWeek, month, title, master=None, cnf={}, **kw):
@@ -131,11 +132,17 @@ class CustomToplevel(CTkToplevel):
             self.browseBtn.configure(text=self.displayname)
 
     def loadingSet(self):
+        self.summarybox.delete("0.0","end")
         self.summarybox.insert("0.0", "Loading...")
         self.after(1, self.convertToText)
             
     def convertToText(self):
         """"Reads text file and stores it. Then uses OpenAI's text model to generate its summary."""
+        if not hasattr(self, 'filename'):
+            self.summarybox.delete("0.0","end")
+            self.summarybox.insert("0.0", "Please provide a file!")
+            return
+
         text_file = self.filename
         
         try:

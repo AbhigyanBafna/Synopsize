@@ -1,3 +1,5 @@
+#Collects all data about the summary and formats it into a nice, list document for future reference.
+
 import docx
 from docx.oxml.ns import qn
 from tkinter import filedialog
