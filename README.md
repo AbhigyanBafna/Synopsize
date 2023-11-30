@@ -68,8 +68,8 @@
     <li>
       <a href="#contributing">Contributing</a>
       <ul>
-        <li><a href="#architecture">Prerequisites</a></li>
-        <li><a href="#further-help">Installation</a></li>
+        <li><a href="#architecture">Architecture</a></li>
+        <li><a href="#further-help">Further Help</a></li>
       </ul>
     </li>
     <li><a href="#license">License</a></li>
