@@ -65,7 +65,13 @@
       </ul>
     </li>
     <li><a href="#usage">Usage</a></li>
-    <li><a href="#contributing">Contributing</a></li>
+    <li>
+      <a href="#contributing">Contributing</a>
+      <ul>
+        <li><a href="#architecture">Prerequisites</a></li>
+        <li><a href="#further-help">Installation</a></li>
+      </ul>
+    </li>
     <li><a href="#license">License</a></li>
     <li><a href="#contact">Contact</a></li>
     <li><a href="#acknowledgments">Acknowledgments</a></li>
@@ -168,7 +174,7 @@ Don't forget to give the project a star! Thanks again!
 
 ### Architecture
 
-![Architecture](https://github.com/AbhigyanBafna/Synopsize/blob/main/media/Synopsize_Architecture.png)
+![Architecture](https://github.com/AbhigyanBafna/Synopsize/blob/main/media/Synopsize_Architecture.jpg)
 
 1. The Splash Screen renders a quick animation of our Logo using an Image Label.
 2. The HomePage gives some timestamp and title options for the summary and diverges into 3 paths.
@@ -218,7 +224,7 @@ Contributors -
 
 Readme Boilerplate -
 * [Best-README-Template](https://github.com/othneildrew/Best-README-Template/tree/master) (Saved a LOT of time!)
-* [preview-markdown](https://github.com/HarshKapadia2/preview-markdown) (Used this for the creation of the `README.md` you are reading as well xD)
+* [preview-markdown](https://github.com/HarshKapadia2/preview-markdown) (Used this for editing this `README.md` as well)
 
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
